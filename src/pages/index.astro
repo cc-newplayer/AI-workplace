@@ -6,34 +6,56 @@ const base = import.meta.env.BASE_URL;
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 allPosts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
-const tagCount: Record<string, number> = {};
+// 按分类统计标签频率
+const categoryTagCount: Record<string, Record<string, number>> = {};
 for (const post of allPosts) {
-  for (const t of post.data.tags) {
-    tagCount[t] = (tagCount[t] || 0) + 1;
+  const cats = post.data.categories.length > 0 ? post.data.categories : ['其他'];
+  for (const cat of cats) {
+    if (!categoryTagCount[cat]) categoryTagCount[cat] = {};
+    for (const t of post.data.tags) {
+      categoryTagCount[cat][t] = (categoryTagCount[cat][t] || 0) + 1;
+    }
   }
 }
-const allTags = Object.entries(tagCount).sort((a, b) => b[1] - a[1]);
+
+// 每个分类：前5个标签 + 剩余
+const categoryData = Object.entries(categoryTagCount).map(([cat, tagMap]) => {
+  const sorted = Object.entries(tagMap).sort((a, b) => b[1] - a[1]);
+  return { cat, top: sorted.slice(0, 5), more: sorted.slice(5) };
+});
 
 function formatDate(d: string) {
-  return new Date(d).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '/');
+  return new Date(d).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
 }
 ---
-<BaseLayout title="AI Blog · 首页" description="AI 驱动的中文内容博客">
+<BaseLayout title="AI 创意工坊" description="AI 驱动的中文内容博客">
   <div class="page-header">
     <h1>AI 创意工坊</h1>
     <p>由 DeerFlow 自动生成，聚焦 AI 应用与工具</p>
   </div>
 
-  {allTags.length > 0 && (
-    <div class="tag-cloud-section">
-      <h2>关键词</h2>
-      <div class="tag-cloud">
-        {allTags.map(([t, count]) => (
-          <a href={`${base}tags/${t}/`} class="tag-cloud-item">
-            #{t}<span class="tag-cloud-count">{count}</span>
-          </a>
-        ))}
-      </div>
+  {categoryData.length > 0 && (
+    <div class="keyword-nav">
+      {categoryData.map(({ cat, top, more }) => (
+        <div class="keyword-group">
+          <span class="keyword-group-label">{cat}</span>
+          <div class="keyword-group-tags">
+            {top.map(([t]) => (
+              <a href={`${base}tags/${t}/`} class="tag">#{t}</a>
+            ))}
+            {more.length > 0 && (
+              <div class="keyword-more-wrap">
+                <button class="keyword-more-btn" type="button">更多 +{more.length}</button>
+                <div class="keyword-more-dropdown">
+                  {more.map(([t]) => (
+                    <a href={`${base}tags/${t}/`} class="tag">#{t}</a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   )}
 
@@ -64,3 +86,16 @@ function formatDate(d: string) {
     )}
   </ul>
 </BaseLayout>
+
+<script>
+  document.querySelectorAll('.keyword-more-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wrap = btn.closest('.keyword-more-wrap');
+      wrap?.classList.toggle('open');
+    });
+  });
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.keyword-more-wrap.open').forEach(el => el.classList.remove('open'));
+  });
+</script>
