@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const tags = [...new Set(posts.flatMap(p => p.data.tags))];
+  return tags.map(tag => ({
+    params: { tag },
+    props: { tag, posts: posts.filter(p => p.data.tags.includes(tag)).sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()) },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+function formatDate(d: string) {
+  return new Date(d).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+---
+<BaseLayout title={`#${tag} · AI Blog`} description={`与「${tag}」相关的所有文章`}>
+  <div class="tag-page">
+    <header class="tag-header">
+      <a href={base} class="back-link">← 返回首页</a>
+      <h1 class="tag-title"><span class="tag-hash">#</span>{tag}</h1>
+      <p class="tag-count">{posts.length} 篇文章</p>
+    </header>
+
+    <div class="post-list">
+      {posts.map(post => (
+        <a href={`${base}blog/${post.slug}/`} class="post-list-item">
+          <div>
+            <div class="post-list-meta">
+              {post.data.categories[0] && `${post.data.categories[0]} · `}{formatDate(post.data.date)}
+            </div>
+            <div class="post-list-title">{post.data.title}</div>
+            {post.data.excerpt && (
+              <div class="post-list-excerpt">{post.data.excerpt}</div>
+            )}
+            <div class="post-list-tags">
+              {post.data.tags.map(t => (
+                <a href={`${base}tags/${t}/`} class={`tag ${t === tag ? 'tag-active' : ''}`} onclick="event.stopPropagation()">{t}</a>
+              ))}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

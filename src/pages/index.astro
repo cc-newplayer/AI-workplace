@@ -11,18 +11,27 @@ const [featured, ...rest] = allPosts;
 const gridPosts = rest.slice(0, 3);
 const listPosts = rest.slice(3);
 
+// 统计所有标签出现次数
+const tagCount: Record<string, number> = {};
+for (const post of allPosts) {
+  for (const t of post.data.tags) {
+    tagCount[t] = (tagCount[t] || 0) + 1;
+  }
+}
+const allTags = Object.entries(tagCount).sort((a, b) => b[1] - a[1]);
+
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 const gradients = [
+  'linear-gradient(135deg, #4facfe 0%, #00c6fb 100%)',
   'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
   'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-  'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
   'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-  'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+  'linear-gradient(135deg, #0ba360 0%, #3cba92 100%)',
+  'linear-gradient(135deg, #2980b9 0%, #6dd5fa 100%)',
+  'linear-gradient(135deg, #56ccf2 0%, #2f80ed 100%)',
 ];
 ---
 <BaseLayout title="AI Blog" description="AI 驱动的中文内容博客">
@@ -46,6 +55,23 @@ const gradients = [
             <span class="hero-read-more">阅读全文</span>
           </div>
         </a>
+      </section>
+    )}
+
+    {allTags.length > 0 && (
+      <section class="tags-section">
+        <div class="section-header">
+          <span class="section-title">关键词</span>
+          <div class="section-line"></div>
+        </div>
+        <div class="tag-cloud">
+          {allTags.map(([t, count]) => (
+            <a href={`${base}tags/${t}/`} class="tag-cloud-item">
+              {t}
+              <span class="tag-cloud-count">{count}</span>
+            </a>
+          ))}
+        </div>
       </section>
     )}
 
