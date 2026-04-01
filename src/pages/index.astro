@@ -1,0 +1,84 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const base = import.meta.env.BASE_URL;
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+allPosts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+const [featured, ...rest] = allPosts;
+
+function formatDate(d: string) {
+  return new Date(d).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// Gradient palette for cards (cycles by index)
+const gradients = [
+  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+  'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+  'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+];
+---
+<BaseLayout title="AI Blog" description="AI 驱动的内容博客">
+  <div class="home">
+
+    {featured && (
+      <section class="hero">
+        <a href={`${base}blog/${featured.data.slug || featured.slug}/`} class="hero-card">
+          <div class="hero-cover" style={`background: ${gradients[0]}`}></div>
+          <div class="hero-content">
+            <div class="hero-meta">
+              {featured.data.categories[0] && (
+                <span class="category-chip">{featured.data.categories[0]}</span>
+              )}
+              <time>{formatDate(featured.data.date)}</time>
+            </div>
+            <h1 class="hero-title">{featured.data.title}</h1>
+            {featured.data.excerpt && (
+              <p class="hero-excerpt">{featured.data.excerpt}</p>
+            )}
+          </div>
+        </a>
+      </section>
+    )}
+
+    {rest.length > 0 && (
+      <section class="grid-section">
+        <h2 class="section-title">最新文章</h2>
+        <div class="article-grid">
+          {rest.map((post, i) => (
+            <a href={`${base}blog/${post.data.slug || post.slug}/`} class="article-card">
+              <div class="card-cover" style={`background: ${gradients[(i + 1) % gradients.length]}`}>
+                {post.data.categories[0] && (
+                  <span class="category-chip">{post.data.categories[0]}</span>
+                )}
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">{post.data.title}</h3>
+                {post.data.excerpt && (
+                  <p class="card-excerpt">{post.data.excerpt}</p>
+                )}
+                <div class="card-meta">
+                  <time>{formatDate(post.data.date)}</time>
+                  {post.data.tags.slice(0, 2).map(t => (
+                    <span class="tag">#{t}</span>
+                  ))}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {allPosts.length === 0 && (
+      <div class="empty-state">
+        <p>还没有文章，敬请期待。</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
