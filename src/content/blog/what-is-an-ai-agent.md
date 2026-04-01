@@ -6,10 +6,8 @@ meta_title: "What Is an AI Agent? Definition, How It Works, and Use Cases"
 meta_description: "Learn what an AI agent is, how it works, the different types, real-world use cases, and key risks. A complete guide for 2024."
 categories: ["AI", "Technology"]
 tags: ["ai agent", "artificial intelligence", "automation", "LLM"]
-excerpt: "What Is an AI Agent? Definition, How It Works, and Real-World Use Cases
-
-An AI agent is an autonomous software system that perceives its environment, makes deci..."
-draft: true
+excerpt: "Learn what an AI agent is, how it works, the different types, real-world use cases, and key risks."
+draft: false
 ---
 
 # What Is an AI Agent? Definition, How It Works, and Real-World Use Cases
