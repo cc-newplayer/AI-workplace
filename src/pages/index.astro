@@ -3,15 +3,9 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const base = import.meta.env.BASE_URL;
-
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 allPosts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
-const [featured, ...rest] = allPosts;
-const gridPosts = rest.slice(0, 3);
-const listPosts = rest.slice(3);
-
-// 统计所有标签出现次数
 const tagCount: Record<string, number> = {};
 for (const post of allPosts) {
   for (const t of post.data.tags) {
@@ -21,121 +15,52 @@ for (const post of allPosts) {
 const allTags = Object.entries(tagCount).sort((a, b) => b[1] - a[1]);
 
 function formatDate(d: string) {
-  return new Date(d).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+  return new Date(d).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '/');
 }
-
-const gradients = [
-  'linear-gradient(135deg, #4facfe 0%, #00c6fb 100%)',
-  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-  'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-  'linear-gradient(135deg, #0ba360 0%, #3cba92 100%)',
-  'linear-gradient(135deg, #2980b9 0%, #6dd5fa 100%)',
-  'linear-gradient(135deg, #56ccf2 0%, #2f80ed 100%)',
-];
 ---
-<BaseLayout title="AI Blog" description="AI 驱动的中文内容博客">
-  <div class="home">
-
-    {featured && (
-      <section class="hero">
-        <a href={`${base}blog/${featured.slug}/`} class="hero-card">
-          <div class="hero-cover" style={`background: ${gradients[0]}`}></div>
-          <div class="hero-content">
-            <div class="hero-label">
-              {featured.data.categories[0] && (
-                <span class="category-chip">{featured.data.categories[0]}</span>
-              )}
-              <time>{formatDate(featured.data.date)}</time>
-            </div>
-            <h1 class="hero-title">{featured.data.title}</h1>
-            {featured.data.excerpt && (
-              <p class="hero-excerpt">{featured.data.excerpt}</p>
-            )}
-            <span class="hero-read-more">阅读全文</span>
-          </div>
-        </a>
-      </section>
-    )}
-
-    {allTags.length > 0 && (
-      <section class="tags-section">
-        <div class="section-header">
-          <span class="section-title">关键词</span>
-          <div class="section-line"></div>
-        </div>
-        <div class="tag-cloud">
-          {allTags.map(([t, count]) => (
-            <a href={`${base}tags/${t}/`} class="tag-cloud-item">
-              {t}
-              <span class="tag-cloud-count">{count}</span>
-            </a>
-          ))}
-        </div>
-      </section>
-    )}
-
-    {gridPosts.length > 0 && (
-      <section class="grid-section">
-        <div class="section-header">
-          <span class="section-title">最新文章</span>
-          <div class="section-line"></div>
-        </div>
-        <div class="article-grid">
-          {gridPosts.map((post, i) => (
-            <a href={`${base}blog/${post.slug}/`} class="article-card">
-              <div class="card-cover" style={`background: ${gradients[(i + 1) % gradients.length]}`}></div>
-              <div class="card-body">
-                {post.data.categories[0] && (
-                  <span class="card-category">{post.data.categories[0]}</span>
-                )}
-                <h3 class="card-title">{post.data.title}</h3>
-                {post.data.excerpt && (
-                  <p class="card-excerpt">{post.data.excerpt}</p>
-                )}
-                <div class="card-footer">
-                  <time>{formatDate(post.data.date)}</time>
-                  <div class="card-tags">
-                    {post.data.tags.slice(0, 2).map(t => (
-                      <span class="tag">{t}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-    )}
-
-    {listPosts.length > 0 && (
-      <section class="list-section">
-        <div class="section-header">
-          <span class="section-title">更多文章</span>
-          <div class="section-line"></div>
-        </div>
-        <div class="post-list">
-          {listPosts.map((post, i) => (
-            <a href={`${base}blog/${post.slug}/`} class="post-list-item">
-              <div>
-                <div class="post-list-meta">
-                  {post.data.categories[0] && `${post.data.categories[0]} · `}{formatDate(post.data.date)}
-                </div>
-                <div class="post-list-title">{post.data.title}</div>
-                {post.data.excerpt && (
-                  <div class="post-list-excerpt">{post.data.excerpt}</div>
-                )}
-              </div>
-              <div class="post-list-thumb" style={`background: ${gradients[(i + 4) % gradients.length]}`}></div>
-            </a>
-          ))}
-        </div>
-      </section>
-    )}
-
-    {allPosts.length === 0 && (
-      <div class="empty-state">还没有文章，敬请期待。</div>
-    )}
-
+<BaseLayout title="AI Blog · 首页" description="AI 驱动的中文内容博客">
+  <div class="page-header">
+    <h1>AI 技术文章</h1>
+    <p>由 DeerFlow 自动生成，聚焦 AI 应用与工具</p>
   </div>
+
+  {allTags.length > 0 && (
+    <div class="tag-cloud-section">
+      <h2>关键词</h2>
+      <div class="tag-cloud">
+        {allTags.map(([t, count]) => (
+          <a href={`${base}tags/${t}/`} class="tag-cloud-item">
+            #{t}<span class="tag-cloud-count">{count}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <ul class="post-list">
+    {allPosts.map(post => (
+      <li>
+        <a href={`${base}blog/${post.slug}/`} class="post-card">
+          <div class="post-card-meta">
+            <span class="post-date">{formatDate(post.data.date)}</span>
+            {post.data.categories[0] && (
+              <span class="badge badge-difficulty">{post.data.categories[0]}</span>
+            )}
+          </div>
+          <h2>{post.data.title}</h2>
+          {post.data.excerpt && <p class="post-summary">{post.data.excerpt}</p>}
+          {post.data.tags.length > 0 && (
+            <div class="tag-list">
+              {post.data.tags.map(t => <span class="tag">#{t}</span>)}
+            </div>
+          )}
+        </a>
+      </li>
+    ))}
+    {allPosts.length === 0 && (
+      <li style="text-align:center;padding:60px 0;color:var(--text-dim);font-family:var(--font-mono)">
+        还没有文章，敬请期待。
+      </li>
+    )}
+  </ul>
 </BaseLayout>

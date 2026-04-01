@@ -17,46 +17,113 @@ const base = import.meta.env.BASE_URL;
     {description && <meta name="description" content={description} />}
     <meta property="og:title" content={ogTitle || title} />
     {description && <meta property="og:description" content={description} />}
-    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
-    <link rel="stylesheet" href={`${base}styles/global.css`} />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>" />
+    <style>
+      *,*:before,*:after{box-sizing:border-box;margin:0;padding:0}
+      :root{
+        --bg:#f6f8fa;--bg-card:#ffffff;--border:#d0d7de;
+        --text:#1f2328;--text-dim:#656d76;
+        --accent:#0969da;--accent-2:#8250df;
+        --green:#1a7f37;
+        --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+        --font-mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace
+      }
+      html{scroll-behavior:smooth}
+      body{background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:16px;line-height:1.7;min-height:100vh}
+      a{color:var(--accent);text-decoration:none}
+      a:hover{text-decoration:underline}
+      .container{max-width:800px;margin:0 auto;padding:0 24px}
+      header{border-bottom:1px solid var(--border);padding:16px 0;background:#fff}
+      header .inner{display:flex;align-items:center;justify-content:space-between}
+      .logo{font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--accent);letter-spacing:-.5px}
+      .logo span{color:var(--accent-2)}
+      nav a{color:var(--text-dim);font-size:14px;margin-left:20px;transition:color .15s}
+      nav a:hover{color:var(--text);text-decoration:none}
+      main{padding:48px 0 80px}
+      footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;font-size:13px;color:var(--text-dim);font-family:var(--font-mono);background:#fff}
+
+      /* post list */
+      .post-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+      .post-card{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:20px 24px;transition:border-color .2s,box-shadow .2s;display:block;color:inherit}
+      .post-card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(9,105,218,.08);text-decoration:none}
+      .post-card-meta{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px;color:var(--text-dim);font-family:var(--font-mono)}
+      .badge{display:inline-block;padding:1px 8px;border-radius:20px;font-size:12px;font-family:var(--font-mono);border:1px solid}
+      .badge-difficulty{color:var(--accent-2);border-color:rgba(130,80,223,.3);background:rgba(130,80,223,.06)}
+      .post-card h2{font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.4}
+      .post-summary{color:var(--text-dim);font-size:14px;line-height:1.6;margin-bottom:12px}
+      .tag-list{display:flex;flex-wrap:wrap;gap:6px}
+      .tag{font-size:12px;font-family:var(--font-mono);padding:2px 10px;border-radius:4px;background:rgba(9,105,218,.06);color:var(--accent);border:1px solid rgba(9,105,218,.2)}
+      .tag:hover{background:rgba(9,105,218,.12);text-decoration:none}
+
+      /* tag cloud */
+      .tag-cloud-section{margin-bottom:32px}
+      .tag-cloud-section h2{font-size:14px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;font-family:var(--font-mono)}
+      .tag-cloud{display:flex;flex-wrap:wrap;gap:8px}
+      .tag-cloud-item{font-size:13px;font-family:var(--font-mono);padding:4px 12px;border-radius:20px;background:var(--bg-card);color:var(--accent);border:1px solid var(--border);transition:border-color .15s,background .15s}
+      .tag-cloud-item:hover{border-color:var(--accent);background:rgba(9,105,218,.06);text-decoration:none}
+      .tag-cloud-count{font-size:11px;color:var(--text-dim);margin-left:4px}
+
+      /* page header */
+      .page-header{margin-bottom:32px}
+      .page-header h1{font-size:26px;font-weight:700;color:var(--text);margin-bottom:4px}
+      .page-header p{color:var(--text-dim);font-size:14px}
+
+      /* tag page */
+      .tag-page-header{margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+      .tag-page-header h1{font-size:24px;font-weight:700;color:var(--text);margin:8px 0 4px}
+      .tag-page-header .count{font-size:13px;color:var(--text-dim);font-family:var(--font-mono)}
+      .tag-active{background:rgba(9,105,218,.12)!important;border-color:var(--accent)!important}
+      .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-dim);font-size:13px;margin-bottom:20px;transition:color .15s;font-family:var(--font-mono)}
+      .back-link:hover{color:var(--text);text-decoration:none}
+
+      /* prose */
+      .article-header{margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--border)}
+      .article-header h1{font-size:28px;font-weight:700;color:var(--text);line-height:1.3;margin:10px 0 14px}
+      .article-meta{display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--text-dim);font-family:var(--font-mono)}
+      .prose h1,.prose h2,.prose h3,.prose h4{color:var(--text);font-weight:600;line-height:1.3;margin:1.8em 0 .6em}
+      .prose h2{font-size:20px;border-bottom:1px solid var(--border);padding-bottom:6px}
+      .prose h3{font-size:17px}
+      .prose p{margin:1.1em 0}
+      .prose ul,.prose ol{padding-left:1.5em;margin:1em 0}
+      .prose li{margin:.3em 0}
+      .prose a{color:var(--accent)}
+      .prose blockquote{border-left:3px solid var(--accent-2);margin:1.5em 0;padding:6px 18px;color:var(--text-dim);background:rgba(130,80,223,.04);border-radius:0 4px 4px 0}
+      .prose code{font-family:var(--font-mono);font-size:.875em;background:rgba(175,184,193,.2);border:1px solid rgba(175,184,193,.3);border-radius:4px;padding:.15em .4em}
+      .prose pre{background:#f6f8fa;border:1px solid var(--border);border-radius:6px;padding:18px 22px;overflow-x:auto;margin:1.4em 0;font-size:14px}
+      .prose pre code{background:none;border:none;padding:0}
+      .prose strong{color:var(--text)}
+      .prose hr{border:none;border-top:1px solid var(--border);margin:2em 0}
+      .prose table{width:100%;border-collapse:collapse;margin:1.4em 0;font-size:14px}
+      .prose th,.prose td{padding:8px 12px;border:1px solid var(--border);text-align:left}
+      .prose th{background:var(--bg);font-family:var(--font-mono);font-size:13px}
+
+      @media(max-width:640px){
+        .container{padding:0 16px}
+        main{padding:32px 0 60px}
+        .post-card{padding:16px 18px}
+        .post-card h2{font-size:16px}
+      }
+    </style>
   </head>
   <body>
-    <header class="site-header">
-      <div class="header-inner">
-        <a href={base} class="logo">AI Blog</a>
+    <header>
+      <div class="container inner">
+        <a href={base} class="logo">ai<span>.</span>blog</a>
         <nav>
-          <a href={base}>首页</a>
-          <a href={`${base}blog/`}>文章</a>
+          <a href={base}>文章</a>
+          <a href={`${base}tags/`}>标签</a>
         </nav>
-        <button id="theme-toggle" aria-label="切换主题" title="切换主题">
-          <span class="icon-sun">☀️</span>
-          <span class="icon-moon">🌙</span>
-        </button>
       </div>
     </header>
 
-    <main>
+    <main class="container">
       <slot />
     </main>
 
-    <footer class="site-footer">
-      <p>Powered by DeerFlow + Astro · {new Date().getFullYear()}</p>
+    <footer>
+      <div class="container">
+        Powered by <code>DeerFlow</code> + Astro · {new Date().getFullYear()}
+      </div>
     </footer>
-
-    <script>
-      const toggle = document.getElementById('theme-toggle');
-      const html = document.documentElement;
-
-      const saved = localStorage.getItem('theme');
-      if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        html.setAttribute('data-theme', 'dark');
-      }
-
-      toggle?.addEventListener('click', () => {
-        const isDark = html.getAttribute('data-theme') === 'dark';
-        html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-        localStorage.setItem('theme', isDark ? 'light' : 'dark');
-      });
-    </script>
   </body>
 </html>
