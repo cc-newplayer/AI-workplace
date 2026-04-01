@@ -8,12 +8,13 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 allPosts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
 const [featured, ...rest] = allPosts;
+const gridPosts = rest.slice(0, 3);
+const listPosts = rest.slice(3);
 
 function formatDate(d: string) {
-  return new Date(d).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(d).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-// Gradient palette for cards (cycles by index)
 const gradients = [
   'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
@@ -21,9 +22,10 @@ const gradients = [
   'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
   'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
   'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+  'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
 ];
 ---
-<BaseLayout title="AI Blog" description="AI 驱动的内容博客">
+<BaseLayout title="AI Blog" description="AI 驱动的中文内容博客">
   <div class="home">
 
     {featured && (
@@ -31,7 +33,7 @@ const gradients = [
         <a href={`${base}blog/${featured.slug}/`} class="hero-card">
           <div class="hero-cover" style={`background: ${gradients[0]}`}></div>
           <div class="hero-content">
-            <div class="hero-meta">
+            <div class="hero-label">
               {featured.data.categories[0] && (
                 <span class="category-chip">{featured.data.categories[0]}</span>
               )}
@@ -41,32 +43,37 @@ const gradients = [
             {featured.data.excerpt && (
               <p class="hero-excerpt">{featured.data.excerpt}</p>
             )}
+            <span class="hero-read-more">阅读全文</span>
           </div>
         </a>
       </section>
     )}
 
-    {rest.length > 0 && (
+    {gridPosts.length > 0 && (
       <section class="grid-section">
-        <h2 class="section-title">最新文章</h2>
+        <div class="section-header">
+          <span class="section-title">最新文章</span>
+          <div class="section-line"></div>
+        </div>
         <div class="article-grid">
-          {rest.map((post, i) => (
+          {gridPosts.map((post, i) => (
             <a href={`${base}blog/${post.slug}/`} class="article-card">
-              <div class="card-cover" style={`background: ${gradients[(i + 1) % gradients.length]}`}>
-                {post.data.categories[0] && (
-                  <span class="category-chip">{post.data.categories[0]}</span>
-                )}
-              </div>
+              <div class="card-cover" style={`background: ${gradients[(i + 1) % gradients.length]}`}></div>
               <div class="card-body">
+                {post.data.categories[0] && (
+                  <span class="card-category">{post.data.categories[0]}</span>
+                )}
                 <h3 class="card-title">{post.data.title}</h3>
                 {post.data.excerpt && (
                   <p class="card-excerpt">{post.data.excerpt}</p>
                 )}
-                <div class="card-meta">
+                <div class="card-footer">
                   <time>{formatDate(post.data.date)}</time>
-                  {post.data.tags.slice(0, 2).map(t => (
-                    <span class="tag">#{t}</span>
-                  ))}
+                  <div class="card-tags">
+                    {post.data.tags.slice(0, 2).map(t => (
+                      <span class="tag">{t}</span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </a>
@@ -75,10 +82,34 @@ const gradients = [
       </section>
     )}
 
-    {allPosts.length === 0 && (
-      <div class="empty-state">
-        <p>还没有文章，敬请期待。</p>
-      </div>
+    {listPosts.length > 0 && (
+      <section class="list-section">
+        <div class="section-header">
+          <span class="section-title">更多文章</span>
+          <div class="section-line"></div>
+        </div>
+        <div class="post-list">
+          {listPosts.map((post, i) => (
+            <a href={`${base}blog/${post.slug}/`} class="post-list-item">
+              <div>
+                <div class="post-list-meta">
+                  {post.data.categories[0] && `${post.data.categories[0]} · `}{formatDate(post.data.date)}
+                </div>
+                <div class="post-list-title">{post.data.title}</div>
+                {post.data.excerpt && (
+                  <div class="post-list-excerpt">{post.data.excerpt}</div>
+                )}
+              </div>
+              <div class="post-list-thumb" style={`background: ${gradients[(i + 4) % gradients.length]}`}></div>
+            </a>
+          ))}
+        </div>
+      </section>
     )}
+
+    {allPosts.length === 0 && (
+      <div class="empty-state">还没有文章，敬请期待。</div>
+    )}
+
   </div>
 </BaseLayout>
