@@ -33,6 +33,7 @@ node farm-scheduler.js --keyword "关键词" --style A|B|C
 | 含"发布已有草稿" | Agent3（止） |
 | 含"只做质检" | Agent3 质检部分（止，check_only=true） |
 | 含 `TOPIC:` / `CONTENT:` / `PUBLISH:` 前缀 | 直接路由到对应 Agent（单独测试模式） |
+| 含 `NEWS:` 前缀 | 直接路由到 `agents/news-agent.md`（独立，不进入内容流水线） |
 
 ---
 
@@ -99,4 +100,10 @@ CONTENT: keyword=LangGraph 教程 style=A
 
 # 单独测试 Agent 3
 PUBLISH: from_content_draft check_only=true
+
+# 更新资讯页（独立于内容流水线）
+NEWS: update
+
+# 预览资讯更新，不写文件
+NEWS: update dry_run
 ```

@@ -149,14 +149,11 @@ C:\Users\admin\Desktop\seo-farm\articles\
 - [ ] badge 风格标签与文章风格一致（A→蓝/B→紫/C→无badge）
 - [ ] 文章页脚有参考来源
 
-### Step 2 — 更新主站文章列表（articles.html）
-- [ ] 在 `seo-farm\articles.html` 的内联 `articlesData` 数组**顶部**插入新文章条目
-- [ ] 格式：`{ id: N, file: 'NN_slug.html', category: 'tutorial|deep|popular', title: '...', desc: '...' }`
+### Step 2 — 更新 script.js（唯一数据源）
+- [ ] 在 `seo-farm\script.js` 的 `articlesData` 数组**顶部**插入新文章条目
+- [ ] 格式：`{ id: N, file: 'NN_slug.html', category: 'tutorial|deep|popular', title: '...', desc: '...', keywords: ['关键词1', '关键词2'] }`
 - [ ] 新文章排在数组第一位（最新的显示在最前面）
-
-### Step 3 — 更新首页搜索数据（script.js）
-- [ ] 在 `seo-farm\script.js` 的 `articlesData` 数组中插入相同条目
-- [ ] 格式额外需要 `keywords: ['关键词1', '关键词2']` 字段
+- [ ] articles.html 已改为引用 script.js，**不再单独维护内联 articlesData**
 
 ### Step 4 — 更新文章索引
 - [ ] 在 `article-index.md` 总览表末尾追加新行

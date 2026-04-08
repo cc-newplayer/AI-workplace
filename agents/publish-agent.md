@@ -78,14 +78,13 @@ C:\Users\admin\Desktop\seo-farm\articles\<article_number>_<slug>.html
 - 包含 `article-header`（含对应风格 badge）、`article-body`、`article-footer`
 - 图片缺失处用占位框替代
 
-**Step 2 — 更新 articles.html**
-在 `C:\Users\admin\Desktop\seo-farm\articles.html` 的内联 `articlesData` 数组顶部插入：
-```javascript
-{ id: N, file: 'NN_slug.html', category: 'tutorial|deep|popular', title: '...', desc: '...' }
-```
+**Step 2 — 更新 script.js 和 articles.html**
 
-**Step 3 — 更新 script.js**
-在 `C:\Users\admin\Desktop\seo-farm\script.js` 的 `articlesData` 中插入相同条目，补充 `keywords` 字段（来自 `topic_tags`）。
+在 `C:\Users\admin\Desktop\seo-farm\script.js` 的 `articlesData` 数组头部插入新条目（含 `keywords` 字段）。
+
+同时在 `C:\Users\admin\Desktop\seo-farm\articles.html` 的内联 `articlesData` 数组头部插入**同一条目**（不含 `keywords` 字段，只需 `id`、`file`、`category`、`title`、`desc`）。
+
+两处必须同步更新，缺一不可。
 
 **Step 4 — 更新 article-index.md**
 - 在"一、已发布文章总览"追加新行
