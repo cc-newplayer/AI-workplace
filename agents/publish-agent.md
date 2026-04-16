@@ -78,6 +78,22 @@ C:\Users\admin\Desktop\seo-farm\articles\<article_number>_<slug>.html
 - 包含 `article-header`（含对应风格 badge）、`article-body`、`article-footer`
 - 图片缺失处用占位框替代
 
+**JSON-LD 字段映射（必须全部填入，不得留空）：**
+
+| JSON-LD 字段 | 取值来源 | 规则 |
+|---|---|---|
+| `headline` | `content_draft.title` | 直接用，不截断 |
+| `description` | `content_draft.description` | **必填，不得为空字符串** |
+| `url` | canonical URL | 由 article_number + slug 构造，与 `<link rel="canonical">` 保持一致 |
+| `datePublished` | `content_draft.generated_at` | 取日期部分，格式 `YYYY-MM-DD` |
+| `inLanguage` | 固定值 | `"zh-CN"` |
+| `keywords` | `content_draft.seo_keywords` | 数组以逗号+空格连接为单个字符串 |
+| `image` | `content_draft.images[0].target_path` | 转为绝对 URL（`https://cc-newplayer.github.io/seo-farm/articles/images/文件名`）；若 images 数组为空则**省略此字段** |
+| `author.url` | 固定值 | `"https://cc-newplayer.github.io/seo-farm/"` |
+| `publisher.url` | 固定值 | 同上 |
+
+同时：`<meta name="twitter:description">` 必须填入与 `meta description` 相同的内容，不得为空。
+
 **Step 2 — 更新 script.js 和 articles.html**
 
 在 `C:\Users\admin\Desktop\seo-farm\script.js` 的 `articlesData` 数组头部插入新条目（含 `keywords` 字段）。

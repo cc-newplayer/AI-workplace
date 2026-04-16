@@ -425,11 +425,15 @@ tr:hover td { background: var(--bg-secondary); }
   {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "[文章标题]",
-    "description": "[与 meta description 相同]",
-    "datePublished": "[YYYY-MM-DD]",
-    "author": { "@type": "Organization", "name": "AI前沿" },
-    "publisher": { "@type": "Organization", "name": "AI前沿" }
+    "headline": "[文章标题，对应 content_draft.title，不截断]",
+    "description": "[meta description 的完整内容，对应 content_draft.description，不得为空]",
+    "url": "https://cc-newplayer.github.io/seo-farm/articles/[NN_slug].html",
+    "datePublished": "[YYYY-MM-DD，取 content_draft.generated_at 的日期部分]",
+    "inLanguage": "zh-CN",
+    "keywords": "[content_draft.seo_keywords 数组，逗号+空格连接为单个字符串]",
+    "image": "[images[0] 的完整 URL；若 images 数组为空则删除此行]",
+    "author": { "@type": "Organization", "name": "AI前沿", "url": "https://cc-newplayer.github.io/seo-farm/" },
+    "publisher": { "@type": "Organization", "name": "AI前沿", "url": "https://cc-newplayer.github.io/seo-farm/" }
   }
   </script>
 

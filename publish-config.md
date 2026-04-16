@@ -128,7 +128,7 @@ C:\Users\admin\Desktop\seo-farm\articles\
 [序号]_[主题slug].html
 ```
 
-- 序号：两位数，按已有文件递增（当前最新：19）
+- 序号：两位数，按已有文件递增（当前最新：40）
 - 主题 slug：英文小写 + 连字符，不含空格和特殊字符
 - 示例：`19_crewai-intro.html`
 
@@ -153,7 +153,10 @@ C:\Users\admin\Desktop\seo-farm\articles\
 - [ ] 在 `seo-farm\script.js` 的 `articlesData` 数组**顶部**插入新文章条目
 - [ ] 格式：`{ id: N, file: 'NN_slug.html', category: 'tutorial|deep|popular', title: '...', desc: '...', keywords: ['关键词1', '关键词2'] }`
 - [ ] 新文章排在数组第一位（最新的显示在最前面）
-- [ ] articles.html 已改为引用 script.js，**不再单独维护内联 articlesData**
+- [ ] 同步更新 `seo-farm\articles.html` 内联 articlesData（不含 keywords 字段，只需 id、file、category、title、desc）
+
+### Step 3 — 更新 sitemap.xml
+- [ ] 在 `seo-farm\sitemap.xml` 的 `</urlset>` 前插入新条目（loc、changefreq、priority）
 
 ### Step 4 — 更新文章索引
 - [ ] 在 `article-index.md` 总览表末尾追加新行
@@ -162,5 +165,5 @@ C:\Users\admin\Desktop\seo-farm\articles\
 - [ ] 在"话题覆盖地图"中标记已覆盖话题
 
 ### Step 5 — 微信公众号（如用户指令包含）
-- [ ] 在 `agent st - 副本` 目录下运行：`node wechat_publisher.js "C:\Users\admin\Desktop\seo-farm\articles\NN_slug.html"`
+- [ ] 在终端运行：`node wechat_publisher.js "C:\Users\admin\Desktop\seo-farm\articles\NN_slug.html"`
 - [ ] 注意：需要当前 IP 在微信公众号白名单中

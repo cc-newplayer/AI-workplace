@@ -83,16 +83,27 @@
 ```js
 {
   id: maxId + n,          // n 从 1 开始递增
+  featured: true,         // 每批次仅 1 条为 true（最重要的那条），其余均为 false
   tag: '<model|product|research|industry>',
   date: 'YYYY-MM-DD',     // 原始发布日期，格式严格
   title: '...',           // 原始标题，不超过 40 字
   desc: '...',            // 150–200 字摘要
   source: '...',          // 来源名称，如 "OpenAI"、"量子位"
-  url: 'https://...'      // 原始文章 URL
+  url: 'https://...',     // 原始文章 URL
+  img: 'https://...',     // 可选：文章头图 URL，规则见下方
 }
 ```
 
-注：`time` 和 `featured` 字段已废弃。相对时间由前端 `relativeTime(date)` 动态计算；宽幅卡片由渲染函数自动取第一条，无需手动标记。
+**`img` 字段规则（可选）：**
+
+在 WebSearch 结果或文章页面中找到 `og:image` 或 `twitter:image` 时，如果满足以下条件则写入 `img`：
+- 必须是真实图片 URL（以 `.jpg`、`.png`、`.webp`、`.jpeg` 结尾，或能确认是图片 CDN 路径）
+- URL 以 `https://` 开头
+- 不是页面 URL、不是 Facebook/Twitter 图标链接
+
+不满足上述条件时**省略 `img` 字段**，前端自动降级为来源 favicon 缩略图。**不得猜测或伪造图片 URL。**
+
+注：`time` 字段已废弃，**不要写入**；相对时间由前端 `getDateLabel(date)` 动态计算。`featured` 字段保持有效——每批次必须写入，1 条为 `true`，其余为 `false`（见 STEP N3）。
 
 ---
 
@@ -142,7 +153,7 @@
 
 1. 读取 `seo-farm/script.js`
 2. 定位 `const newsData = [` 行，将新条目插入数组**头部**（最新的在最前）
-3. 若插入后 `newsData` 长度 > **30**，从尾部删除多余条目
+3. 计算截止日期 = 今日日期 - 30 天（格式 `YYYY-MM-DD`），删除 `newsData` 中所有 `date` 早于截止日期的条目
 4. 若 STEP N5.5 有里程碑条目：定位 `const timelineData = [` 行，将里程碑对象插入数组**头部**
 5. 写回文件，保持原有缩进风格（2 空格）
 
@@ -153,7 +164,7 @@
 ```
 [NEWS-AGENT] 本次更新完成
 新增资讯：N 条
-当前总条目：M 条（已保留最新 30 条）
+当前总条目：M 条（已保留最近 30 天）
 来源分布：model N | product N | research N | industry N
 里程碑更新：<标题> 已写入 timelineData（或"本批次无里程碑事件"）
 ```

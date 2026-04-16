@@ -66,7 +66,8 @@ PUBLISH: from_content_draft
 | 错误情况 | 处理方式 |
 |---------|---------|
 | keyword-matrix-latest.json 不存在 | 提示：请先运行 `TOPIC: <主题词>` |
-| content-draft.json 不存在 | 提示：请先运行 `CONTENT: from_keyword_matrix` || 任何 Agent 输出 FAIL | 停止流程，说明失败原因和修复建议，等待用户处理后重新调用对应 Agent |
+| content-draft.json 不存在 | 提示：请先运行 `CONTENT: from_keyword_matrix` |
+| 任何 Agent 输出 FAIL | 停止流程，说明失败原因和修复建议，等待用户处理后重新调用对应 Agent |
 | 微信 token 过期 | 提示用户检查 `wx_config.js` 并刷新 access_token |
 
 ---
