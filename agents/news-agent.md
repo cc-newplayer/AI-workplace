@@ -156,6 +156,10 @@
 3. 计算截止日期 = 今日日期 - 30 天（格式 `YYYY-MM-DD`），删除 `newsData` 中所有 `date` 早于截止日期的条目
 4. 若 STEP N5.5 有里程碑条目：定位 `const timelineData = [` 行，将里程碑对象插入数组**头部**
 5. 写回文件，保持原有缩进风格（2 空格）
+6. **同步静态数字**：统计写入后 `newsData` 的总条目数 M，按如下规则更新两个 HTML 文件：
+   - `seo-farm/index.html`：将 `<span class="stat-num">` 后跟 `条资讯` 的那个数字改为 `${Math.floor(M/10)*10}+`（向下取整到10的倍数）
+   - `seo-farm/about.html`：将 `<span class="num">` 后跟 `原创文章` 的数字保持不动（由 content-agent 负责）
+7. 完成后执行 git commit + push（`seo-farm` 仓库），包含 script.js、index.html 所有变更
 
 ---
 
