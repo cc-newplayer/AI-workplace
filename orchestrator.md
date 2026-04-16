@@ -34,6 +34,7 @@ node farm-scheduler.js --keyword "关键词" --style A|B|C
 | 含"只做质检" | Agent3 质检部分（止，check_only=true） |
 | 含 `TOPIC:` / `CONTENT:` / `PUBLISH:` 前缀 | 直接路由到对应 Agent（单独测试模式） |
 | 含 `NEWS:` 前缀 | 直接路由到 `agents/news-agent.md`（独立，不进入内容流水线） |
+| 含 `REVIEW:` 前缀，或指令含"测评/对比/横评/vs/比较/选型" | 直接路由到 `agents/review-agent.md`（独立，不进入内容流水线） |
 
 ---
 
@@ -107,4 +108,13 @@ NEWS: update
 
 # 预览资讯更新，不写文件
 NEWS: update dry_run
+
+# 明确产品的测评文章
+REVIEW: Claude vs GPT-5.4 vs Gemini
+
+# 只给赛道，自动选题
+REVIEW: AI 编程助手对比
+
+# 从对话触发（同等效果）
+写一篇大模型测评文章
 ```
