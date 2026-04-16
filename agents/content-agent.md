@@ -109,6 +109,185 @@ node doubao_image.js "提示词"
 读取 `article-index.md` 总览表，取当前最大编号 +1 作为**预留编号**，写入 content-draft.json。
 最终编号由 publish-agent 在执行发布前再次确认（防止并发写入导致重复）。
 
+### STEP C6.5：同步文章列表与静态数字
+
+新文章写入 seo-farm 后，**必须同步以下三处**（缺一不可）：
+
+**① seo-farm/articles.html**：在 `<script>` 块的 `articlesData = [` 数组头部插入新文章对象（格式与 script.js 相同，但**不含 keywords 字段**）：
+```js
+{ id: NN, file: 'NN_slug.html', img: 'articles/images/NN_img1_desc.jpg', category: 'tutorial|popular|deep', title: '...', desc: '...' },
+```
+
+**② seo-farm/about.html**：将 `<span class="num">` 后跟 `原创文章` 的数字改为当前文章总数（articlesData.length）后加 `+`
+
+**③ seo-farm/index.html**：检查 `条资讯` 数字是否与当前 newsData 条目数匹配，不匹配则顺带更新
+
+完成后，将 articles.html、about.html、index.html 连同文章 HTML 文件一起 commit + push。
+
+**④ seo-farm/script.js — articleTabsData.latest**：将新文章插入 `latest` 数组头部，保持最多 4 条，移除最旧的一条：
+```js
+{ title: '文章标题（可适当截短）', url: 'articles/NN_slug.html', img: 'articles/images/NN_img1_desc.jpg' },
+```
+
+### STEP C6.6：更新 RSS Feed
+
+在 `seo-farm/feed.xml` 的 `<channel>` 头部插入新文章的 `<item>`，格式如下：
+
+```xml
+<item>
+  <title>文章完整标题</title>
+  <link>https://cc-newplayer.github.io/seo-farm/articles/NN_slug.html</link>
+  <guid isPermaLink="true">https://cc-newplayer.github.io/seo-farm/articles/NN_slug.html</guid>
+  <pubDate><!-- RFC 822 格式日期，如 Wed, 16 Apr 2026 00:00:00 +0000 --></pubDate>
+  <description>文章 desc 字段原文</description>
+  <category><!-- 风格A→保姆级教程，风格B→深度科普，风格C→大众科普 --></category>
+</item>
+```
+
+插入后检查 `<channel>` 内 `<item>` 总数，若超过 20 条，删除最旧的一条（文件末尾最后一个 `</item>` 之前的那条）。
+
+同时更新 `<channel>` 的 `<lastBuildDate>` 为本次发布日期。
+
+将 feed.xml 连同其他文件一起纳入同一次 commit。
+
+### STEP C5.5：生成文章 HTML（强制使用标准模板）
+
+将正文 Markdown 转为 HTML 时，**必须使用以下完整模板**，不可省略任何结构：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>document.documentElement.setAttribute('data-theme',localStorage.getItem('ai-article-theme')||'light');</script>
+  <title><!-- 文章标题 -->｜AI前沿</title>
+  <meta name="description" content="<!-- SEO摘要 -->">
+  <meta name="keywords" content="<!-- 关键词逗号分隔 -->">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://cc-newplayer.github.io/seo-farm/articles/NN_slug.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="<!-- 文章标题 -->">
+  <meta property="og:description" content="<!-- SEO摘要 -->">
+  <meta property="og:url" content="https://cc-newplayer.github.io/seo-farm/articles/NN_slug.html">
+  <meta property="og:image" content="https://cc-newplayer.github.io/seo-farm/articles/images/NN_img1_desc.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<!-- 文章标题 -->">
+  <meta name="twitter:description" content="<!-- SEO摘要 -->">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "<!-- 文章标题 -->",
+    "description": "<!-- SEO摘要 -->",
+    "image": "https://cc-newplayer.github.io/seo-farm/articles/images/NN_img1_desc.jpg",
+    "datePublished": "YYYY-MM-DD",
+    "inLanguage": "zh-CN",
+    "keywords": "<!-- 关键词 -->",
+    "author": { "@type": "Organization", "name": "AI前沿", "url": "https://cc-newplayer.github.io/seo-farm/" },
+    "publisher": { "@type": "Organization", "name": "AI前沿", "url": "https://cc-newplayer.github.io/seo-farm/" }
+  }
+  </script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="article-common.css" />
+</head>
+<body>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="../index.html" class="site-nav-logo">⚡ AI<span class="accent">前沿</span></a>
+    <div class="site-nav-links">
+      <a href="../index.html">首页</a>
+      <a href="../news.html">AI资讯</a>
+      <a href="../tools.html">AI工具</a>
+      <a href="../articles.html">AI文章</a>
+      <a href="../about.html">关于</a>
+      <button id="themeToggle" class="theme-btn" aria-label="切换主题">🌙</button>
+    </div>
+  </div>
+</nav>
+<aside class="toc-sidebar" id="tocSidebar">
+  <div class="toc-label">📑 本文目录</div>
+  <ul class="toc-list" id="tocList"></ul>
+</aside>
+<div class="page-wrapper">
+
+  <header class="article-header">
+    <div class="badge-row">
+      <!-- 风格A: <span class="badge badge-tutorial">📘 保姆级教程</span> -->
+      <!-- 风格C: <span class="badge badge-popular">🌐 大众科普</span> -->
+      <!-- 风格B: <span class="badge badge-deep">🔬 深度科普</span> -->
+      <span class="badge badge-meta">⏱ 约 N 分钟阅读</span>
+      <span class="badge badge-meta"><!-- 主题标签 --></span>
+    </div>
+    <h1><!-- 文章标题 --></h1>
+    <p class="article-lead"><!-- 导语，2-3句，说清楚读完能得到什么 --></p>
+  </header>
+
+  <div class="article-body">
+    <!-- 头图 -->
+    <img src="images/NN_img1_desc.jpg" alt="<!-- 图片描述 -->" style="width:100%;border-radius:8px;margin-bottom:24px;">
+
+    <!-- 正文内容 -->
+
+  </div>
+
+  <footer class="article-footer">
+    参考来源：<!-- 来源链接列表 -->
+  </footer>
+
+</div>
+<script>
+(function () {
+  var headings = document.querySelectorAll('.article-body h2');
+  var tocList  = document.getElementById('tocList');
+  if (tocList && headings.length) {
+    headings.forEach(function (h, i) {
+      if (!h.id) h.id = 'sec-' + i;
+      var li = document.createElement('li');
+      li.className = 'toc-item';
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.className = 'toc-link';
+      a.textContent = h.textContent;
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById(h.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      li.appendChild(a);
+      tocList.appendChild(li);
+    });
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          tocList.querySelectorAll('.toc-link').forEach(function (l) { l.classList.remove('toc-active'); });
+          var active = tocList.querySelector('a[href="#' + id + '"]');
+          if (active) active.classList.add('toc-active');
+        }
+      });
+    }, { rootMargin: '-5% 0px -75% 0px' });
+    headings.forEach(function (h) { observer.observe(h); });
+  }
+  var btn = document.getElementById('themeToggle');
+  if (btn) {
+    btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+    btn.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ai-article-theme', next);
+      btn.textContent = next === 'dark' ? '☀️' : '🌙';
+    });
+  }
+})();
+</script>
+</body>
+</html>
+```
+
+**禁止**：省略 `article-common.css`、省略 `<nav>`、省略 `<aside class="toc-sidebar">`、省略底部 TOC+主题脚本、引入 mermaid.js（除非文章确实含 Mermaid 图）。
+
 ### STEP C7：自检 quality_flags
 填写以下字段：
 - `word_count`：统计正文字数
