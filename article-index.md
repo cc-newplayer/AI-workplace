@@ -1,11 +1,11 @@
 # 文章索引与选题记录
 
-> 最后更新：2026-04-16
+> 最后更新：2026-05-29
 > 用途：防止选题重复、追踪已覆盖话题、为 RAG/向量查重提供基础数据
 
 ---
 
-## 一、已发布文章总览（41 篇）
+## 一、已发布文章总览（49 篇）
 
 | # | 文件名 | 标题 | 风格 | 核心话题标签 |
 |---|--------|------|------|------------|
@@ -50,6 +50,14 @@
 | 39 | 39_mcp-protocol-why-it-won.html | MCP 凭什么在六个月内装机 9700 万次——AI 协议战争的胜负手 | B | MCP、Model Context Protocol、AI协议标准、工具集成、Anthropic、深度科普 |
 | 40 | 40_kimi-tutorial.html | Kimi AI 保姆级入门教程：零基础5步上手，免费读完200页文档 | A | Kimi、月之暗面、AI助手教程、长文本处理、深度搜索、零代码 |
 | 41 | 41_glm-51-tutorial.html | 零基础也能上手！GLM-5.1 保姆级入门教程（2026最新版） | A | GLM-5.1、智谱AI、Z.ai、国产开源大模型、代码AI、SWE-Bench |
+| 42 | 42_chatgpt-shopping-acp.html | ChatGPT 现在可以帮你买东西了——这不是购物升级，是电商规则的重写 | C | ChatGPT购物、Agentic Commerce Protocol、AI电商、ACP协议、Stripe、职业冲击 |
+| 43 | 43_court-rules-ai-cant-replace-workers.html | 法院判了：公司不能因为AI能干你的活就开除你——但这不是好消息 | C | AI替代裁员、杭州法院判决、劳动法AI、职场AI冲击、全球首例 |
+| 44 | 44_ai-agent-wars-personal-butler.html | 巨头都在抢着做你的"24小时AI管家"——你的工作还安全吗 | C | Meta Hatch、Google Remy、OpenClaw、AI Agent大战、AI私人助手 |
+| 45 | 45_meta-ai-layoffs-roi-paradox.html | 扎克伯格说一个AI顶几十个人，然后裁了8000人——但这笔账根本算不过来 | C | Meta裁员、AI裁员ROI、Gartner研究、科技公司裁员2026、AI替代悖论 |
+| 46 | 46_openclaw-architecture-deep-dive.html | OpenClaw 凭什么三个月拿下25万星——一个周末项目的架构到底有多疯狂 | B | OpenClaw、架构拆解、Peter Steinberger、Gateway、Agentic Loop、AI Agent安全 |
+| 47 | 47_openai-daybreak-architecture.html | OpenAI Daybreak 不只是找漏洞——它能自己写补丁、自己验证、自己部署 | B | OpenAI Daybreak、GPT-5.5-Cyber、AI网络安全、Codex Security、Aardvark |
+| 48 | 48_codex-mobile-control-explained.html | Codex 上手机了——但你想象的"地铁上写代码"根本不是它要做的事 | C | Codex 手机、OpenAI Codex 移动版、ChatGPT App 编程、AI Agent 远程控制、职业冲击 |
+| 49 | 49_bytedance-ai-chip-full-stack.html | 字节跳动为什么要自己造芯片？从一笔 2000 亿的基建账单说起 | B | 字节跳动AI芯片、Qualcomm ASIC、自研CPU、豆包手机、RISC-V、Arm、全栈AI基建 |
 
 ---
 
@@ -205,9 +213,9 @@
 
 | 风格 | 篇数 | 占比 | 文章编号 |
 |------|------|------|---------|
-| A 保姆级教程 | 17 | 43% | 01,02,03,04,07,09,11,13,19,20,22,23,27,29,30,36,40 |
-| B 深度科普 | 12 | 30% | 05,06,08,10,12,14,15,24,26,31,34,39 |
-| C 大众科普 | 11 | 28% | 16,17,18,21,25,28,32,33,35,37,38 |
+| A 保姆级教程 | 17 | 35% | 01,02,03,04,07,09,11,13,19,20,22,23,27,29,30,36,40 |
+| B 深度科普 | 16 | 33% | 05,06,08,10,12,14,15,24,26,31,34,39,46,47,49 |
+| C 大众科普 | 16 | 33% | 16,17,18,21,25,28,32,33,35,37,38,42,43,44,45,48 |
 
 ---
 
@@ -229,6 +237,7 @@
 20 LangGraph入门  →  10 Agent生产架构深度（进阶）、05 Agent四大模块（基础）
 21 token大众科普  →  16 RAG大众科普（AI说错话与token关联）、05 Agent架构（记忆模块）
 22 n8n企业工作流  →  03 n8n入门（基础）、07 平台横评（选型参考）
+48 Codex手机版  →  31 Codex深度（技术拆解）、44 AI管家大战（趋势）、45 Meta裁员悖论（职业冲击对照）
 ```
 
 ### 横向对比型（读者选型参考）
