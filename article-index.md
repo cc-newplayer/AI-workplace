@@ -1,11 +1,11 @@
 # 文章索引与选题记录
 
-> 最后更新：2026-05-29
+> 最后更新：2026-06-02
 > 用途：防止选题重复、追踪已覆盖话题、为 RAG/向量查重提供基础数据
 
 ---
 
-## 一、已发布文章总览（49 篇）
+## 一、已发布文章总览（51 篇）
 
 | # | 文件名 | 标题 | 风格 | 核心话题标签 |
 |---|--------|------|------|------------|
@@ -58,6 +58,8 @@
 | 47 | 47_openai-daybreak-architecture.html | OpenAI Daybreak 不只是找漏洞——它能自己写补丁、自己验证、自己部署 | B | OpenAI Daybreak、GPT-5.5-Cyber、AI网络安全、Codex Security、Aardvark |
 | 48 | 48_codex-mobile-control-explained.html | Codex 上手机了——但你想象的"地铁上写代码"根本不是它要做的事 | C | Codex 手机、OpenAI Codex 移动版、ChatGPT App 编程、AI Agent 远程控制、职业冲击 |
 | 49 | 49_bytedance-ai-chip-full-stack.html | 字节跳动为什么要自己造芯片？从一笔 2000 亿的基建账单说起 | B | 字节跳动AI芯片、Qualcomm ASIC、自研CPU、豆包手机、RISC-V、Arm、全栈AI基建 |
+| 50 | 50_clickup-100x-org-ai-layoffs.html | ClickUp 裁了22%的人，部署了3000个AI Agent，给留下的人开百万年薪——这是你未来公司的样子吗 | C | ClickUp裁员、AI Agent替代、100x组织、AI裁员ROI、职业冲击、Gartner研究 |
+| 51 | 51_minimax-m3-architecture-deep-dive.html | MiniMax M3 的 MSA 架构到底做了什么？一篇拆清楚「稀疏注意力」为什么能干掉全注意力 | B | MiniMax M3、MSA架构、稀疏注意力、100万token、SWE-Bench Pro、开源大模型、MoE、稀宇科技 |
 
 ---
 
